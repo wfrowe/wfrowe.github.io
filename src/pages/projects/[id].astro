@@ -1,0 +1,19 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+// Only projects without an external `url` get a page here.
+export async function getStaticPaths() {
+	const projects = await getCollection('projects', ({ data }) => !data.draft && !data.url);
+	return projects.map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<Base title={project.data.title} description={project.data.summary}>
+	<p><a href="/projects/">&larr; All projects</a></p>
+	<h1>{project.data.title}</h1>
+	<Content />
+</Base>
